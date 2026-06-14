@@ -262,7 +262,9 @@
     </div>
     <div class="courses-grid" id="grid"></div>
     <button class="btn-calc" onclick="calculate()">احسب المعدل</button>
-   <button class="btn-calc" onclick="savePageImage()" style="margin-top:10px;">
+   <button id="saveBtn" class="btn-calc"
+        onclick="savePageImage()"
+        style="margin-top:10px; display:none;">
 📸 حفظ النتيجة كصورة
 </button>
   </div>
@@ -462,6 +464,7 @@ function calculate() {
   }));
 
   rc.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  document.getElementById('saveBtn').style.display = 'block';
 }
 
 /* ── Grade label ───────────────────────────────────────────────── */
