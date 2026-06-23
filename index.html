@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>حاسبة المعدل – المرحلة الخامسة – كلية الطب</title>
+  <title>حاسبة المعدل التراكمي – كلية الطب</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -51,7 +51,10 @@
       color: rgba(255,255,255,0.82); font-size: 15px;
       margin-bottom: 20px; position: relative;
     }
-    .hdr-pills { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; position: relative; }
+    .hdr-pills {
+      display: flex; gap: 10px; justify-content: center;
+      flex-wrap: wrap; position: relative;
+    }
     .h-pill {
       background: rgba(255,255,255,0.12);
       border: 1px solid rgba(255,255,255,0.22);
@@ -60,7 +63,83 @@
     }
     .h-pill strong { color: #93c5fd; }
 
-    /* ══ CARDS ════════════════════════════════════════════════ */
+    /* ══ STAGE SELECTOR ═══════════════════════════════════════ */
+    .stage-selector-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 32px 28px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 24px rgba(37,99,235,0.08), 0 1px 4px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+    .stage-selector-title {
+      font-size: 18px; font-weight: 700; color: #1e2d5a;
+      margin-bottom: 24px;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .stage-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 560px) { .stage-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 380px) { .stage-grid { grid-template-columns: 1fr; } }
+
+    .stage-btn {
+      background: #f7f9ff;
+      border: 2px solid #dde5f6;
+      border-radius: 16px;
+      padding: 22px 12px;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      font-family: 'Tajawal', sans-serif;
+      text-align: center;
+    }
+    .stage-btn:hover {
+      border-color: #2563eb;
+      background: #eff6ff;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(37,99,235,0.18);
+    }
+    .stage-btn.active {
+      border-color: #2563eb;
+      background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+      box-shadow: 0 4px 16px rgba(37,99,235,0.2);
+    }
+    .stage-num {
+      font-size: 36px; font-weight: 800;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stage-lbl { font-size: 14px; font-weight: 700; color: #1e2d5a; margin-bottom: 5px; }
+    .stage-meta { font-size: 11.5px; color: #6b7280; line-height: 1.6; }
+    .stage-gpa-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: #fff; font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px;
+      margin-top: 8px;
+    }
+
+    /* Change stage button */
+    .btn-change {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff; padding: 8px 20px;
+      border-radius: 50px; font-family: 'Tajawal', sans-serif;
+      font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: background 0.2s;
+      margin-top: 16px;
+      position: relative;
+    }
+    .btn-change:hover { background: rgba(255,255,255,0.25); }
+
+    /* ══ FORM CARD ════════════════════════════════════════════ */
     .card {
       background: #fff;
       border-radius: 20px;
@@ -68,7 +147,6 @@
       margin-bottom: 18px;
       box-shadow: 0 4px 24px rgba(37,99,235,0.08), 0 1px 4px rgba(0,0,0,0.05);
     }
-
     .card-title {
       font-size: 16px; font-weight: 700; color: #1e2d5a;
       padding-bottom: 16px; border-bottom: 2px solid #eef0fb;
@@ -131,7 +209,7 @@
     .g-inp.err   { border-color: #ef4444; }
     .g-inp::placeholder { color: #c8cfe8; font-weight: 400; }
 
-    /* ══ BUTTON ════════════════════════════════════════════════ */
+    /* ══ CALC BUTTON ══════════════════════════════════════════ */
     .btn-calc {
       display: block; width: 100%; padding: 16px;
       background: linear-gradient(135deg, #1a40ad, #2563eb, #4f46e5);
@@ -142,22 +220,14 @@
       transition: opacity 0.2s, transform 0.1s, box-shadow 0.2s;
       box-shadow: 0 5px 22px rgba(37,99,235,0.4);
     }
-    .btn-calc:hover   { opacity: 0.9; box-shadow: 0 8px 30px rgba(37,99,235,0.5); }
-    .btn-calc:active  { transform: scale(0.99); }
+    .btn-calc:hover  { opacity: 0.9; box-shadow: 0 8px 30px rgba(37,99,235,0.5); }
+    .btn-calc:active { transform: scale(0.99); }
 
-    /* ══ RESULT CARD ═══════════════════════════════════════════ */
-    #result           { display: none; }
-    #result.show      { display: block; animation: fadeUp 0.35s ease; }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
+    /* ══ RESULT CARD ══════════════════════════════════════════ */
     .r-heading {
       text-align: center; font-size: 19px; font-weight: 700;
       color: #1e2d5a; margin-bottom: 22px;
     }
-
     .scores-row {
       display: grid; grid-template-columns: 1fr 1fr;
       gap: 14px; margin-bottom: 18px;
@@ -171,7 +241,6 @@
     .s-val { font-size: 48px; font-weight: 800; line-height: 1; }
     .s-of  { font-size: 16px; opacity: 0.7; margin-top: 8px; }
 
-    /* Grade badge */
     .g-badge {
       display: flex; align-items: center; justify-content: center;
       gap: 8px; border-radius: 12px; padding: 14px;
@@ -180,10 +249,10 @@
     .g-badge.excellent { background: #faf5ff; border: 2px solid #c4b5fd; color: #6d28d9; }
     .g-badge.vgood     { background: #f0fdf4; border: 2px solid #86efac; color: #166534; }
     .g-badge.good      { background: #eff6ff; border: 2px solid #93c5fd; color: #1e40af; }
-    .g-badge.pass      { background: #fffbeb; border: 2px solid #fcd34d; color: #92400e; }
+    .g-badge.medium    { background: #fffbeb; border: 2px solid #fcd34d; color: #92400e; }
+    .g-badge.pass      { background: #fff7ed; border: 2px solid #fdba74; color: #9a3412; }
     .g-badge.fail      { background: #fef2f2; border: 2px solid #fca5a5; color: #dc2626; }
 
-    /* Progress bar */
     .prog-wrap { margin-bottom: 24px; }
     .prog-meta {
       display: flex; justify-content: space-between;
@@ -196,7 +265,6 @@
       transition: width 1.3s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    /* Summary table */
     .tbl-sec-title { font-size: 15px; font-weight: 700; color: #374151; margin-bottom: 12px; }
     .tbl-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid #e5e7eb; }
     table { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -216,7 +284,6 @@
       border-bottom: none;
     }
 
-    /* Formula note */
     .formula-note {
       background: #f8faff; border: 1px solid #dbeafe;
       border-radius: 10px; padding: 14px 18px;
@@ -226,14 +293,21 @@
     }
     .formula-note b { color: #1e40af; }
 
-    /* Error message */
     .err-msg {
       background: #fef2f2; border: 1px solid #fca5a5;
       color: #dc2626; border-radius: 10px;
       padding: 13px 18px; font-size: 14px; font-weight: 500;
     }
 
-    /* Footer */
+    /* ══ UTILITIES ════════════════════════════════════════════ */
+    .hidden { display: none !important; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .anim { animation: fadeUp 0.35s ease; }
+
     .page-footer { text-align: center; margin-top: 24px; font-size: 13px; color: #9ca3af; }
     .page-footer a { color: #6b7280; font-weight: 700; text-decoration: none; }
     .page-footer a:hover { color: #374151; }
@@ -242,29 +316,60 @@
 <body>
 <div class="wrapper">
 
-  <!-- HEADER -->
+  <!-- ══ HEADER ══════════════════════════════════════════════ -->
   <div class="page-hdr">
     <h1>حاسبة المعدل التراكمي</h1>
-    <div class="hdr-sub">المرحلة الخامسة — كلية الطب</div>
-    <div class="hdr-pills">
-      <span class="h-pill">عدد المواد: <strong>12</strong></span>
-      <span class="h-pill">وحدات المرحلة من المجموع الكلي: <strong>25</strong></span>
+    <div class="hdr-sub" id="hdr-sub">كلية الطب — اختر المرحلة الدراسية</div>
+    <div class="hdr-pills" id="hdr-pills">
+      <span class="h-pill">المراحل: <strong>٤ — ٦</strong></span>
+      <span class="h-pill">نظام الوحدات الدراسية</span>
+    </div>
+    <button class="btn-change hidden" id="btn-change" onclick="showSelector()">⟵ تغيير المرحلة</button>
+  </div>
+
+  <!-- ══ STAGE SELECTOR ═══════════════════════════════════════ -->
+  <div class="stage-selector-card" id="selector-card">
+    <div class="stage-selector-title">
+      <span>🎓</span> اختر المرحلة الدراسية
+    </div>
+    <div class="stage-grid">
+
+      <div class="stage-btn" onclick="selectStage(4)">
+        <div class="stage-num">٤</div>
+        <div class="stage-lbl">المرحلة الرابعة</div>
+        <div class="stage-meta">٨ مواد<br>٥٠ وحدة</div>
+        <div class="stage-gpa-badge">٢٠ من المجموع الكلي</div>
+      </div>
+
+      <div class="stage-btn" onclick="selectStage(5)">
+        <div class="stage-num">٥</div>
+        <div class="stage-lbl">المرحلة الخامسة</div>
+        <div class="stage-meta">١٢ مادة<br>٥١ وحدة</div>
+        <div class="stage-gpa-badge">٢٥ من المجموع الكلي</div>
+      </div>
+
+      <div class="stage-btn" onclick="selectStage(6)">
+        <div class="stage-num">٦</div>
+        <div class="stage-lbl">المرحلة السادسة</div>
+        <div class="stage-meta">٤ مواد<br>٤٦ وحدة</div>
+        <div class="stage-gpa-badge">٤٠ من المجموع الكلي</div>
+      </div>
+
     </div>
   </div>
 
-  <!-- FORM CARD -->
-  <div class="card">
+  <!-- ══ FORM CARD ════════════════════════════════════════════ -->
+  <div class="card hidden" id="form-card">
     <div class="card-title">
       <span class="title-bar"></span>
-      درجات مواد المرحلة الخامسة
+      <span id="form-title">درجات المواد</span>
     </div>
-   <div class="courses-grid" id="grid"></div>
-<button class="btn-calc" onclick="calculate()">احسب المعدل</button>
+    <div class="courses-grid" id="grid"></div>
+    <button class="btn-calc" onclick="calculate()">احسب المعدل</button>
+  </div>
 
-</div>
-  
-  <!-- RESULT CARD -->
-  <div class="card" id="result"></div>
+  <!-- ══ RESULT CARD ══════════════════════════════════════════ -->
+  <div class="card hidden" id="result"></div>
 
   <div class="page-footer">
     Made by <a href="https://t.me/AbdAla3la">AbdulAala</a>
@@ -274,56 +379,143 @@
 <script>
 'use strict';
 
-/* ── Data ──────────────────────────────────────────────────────────
-   Weights as specified. Total internal credits = 51.
-   Stage-5 contribution to the 6-year cumulative GPA = 25 units.
-   Conversion: avg_out_of_25 = avg_out_of_100 × (25/100) = avg_out_of_100 / 4
-─────────────────────────────────────────────────────────────────── */
-const COURSES = [
-  { id: 'medicine',   ar: 'الطب الباطني',              en: 'Medicine',                   w: 6 },
-  { id: 'gynecology', ar: 'النسائية والتوليد',           en: 'Gynecology',                 w: 6 },
-  { id: 'phc',        ar: 'الرعاية الصحية الأولية',     en: 'PHC',                        w: 5 },
-  { id: 'pediatrics', ar: 'طب الأطفال',                 en: 'Pediatrics',                 w: 3 },
-  { id: 'surgery',    ar: 'الجراحة',                    en: 'Surgery',                    w: 4 },
-  { id: 'ortho',      ar: 'جراحة العظام',               en: 'Orthopedics',                w: 4 },
-  { id: 'radiology',  ar: 'الأشعة والتخدير',            en: 'Radiology & Anesthesiology', w: 4 },
-  { id: 'ophtha',     ar: 'طب العيون',                  en: 'Ophthalmology',              w: 4 },
-  { id: 'dermato',    ar: 'الأمراض الجلدية',            en: 'Dermatology',                w: 4 },
-  { id: 'ent',        ar: 'الأنف والأذن والحنجرة',      en: 'Otolaryngology (ENT)',        w: 4 },
-  { id: 'psych',      ar: 'الطب النفسي',               en: 'Psychiatry',                  w: 3 },
-  { id: 'Project',    ar: 'المشروع',               en: 'Community project',                  w: 4 },
-];
+/* ══════════════════════════════════════════════════════════════════
+   STAGE DATA
+══════════════════════════════════════════════════════════════════ */
+const STAGES = {
 
-// 6+6+5+3+4+4+4+4+4+4+3+4 = 51
-const TOT_W   = COURSES.reduce((s, c) => s + c.w, 0);
-const GPA_MAX = 25;
-const DIVISOR = 100 / GPA_MAX;  // = 4  →  avg25 = avg100 / 4
+  4: {
+    label: 'المرحلة الرابعة',
+    gpaMax: 20,
+    courses: [
+      { id: 'obstetrics',  ar: 'التوليد',             en: 'Obstetrics',         w: 8  },
+      { id: 'ethics',      ar: 'الأخلاقيات الطبية',   en: 'Medical Ethics',     w: 2  },
+      { id: 'forensic',    ar: 'الطب الشرعي',         en: 'Forensic Medicine',  w: 6  },
+      { id: 'comproject',  ar: 'المشروع المجتمعي',    en: 'Community Project',  w: 6  },
+      { id: 'community',   ar: 'طب المجتمع',          en: 'Community Medicine', w: 7  },
+      { id: 'pediatrics',  ar: 'طب الأطفال',          en: 'Pediatrics',         w: 6  },
+      { id: 'surgery',     ar: 'الجراحة',             en: 'Surgery',            w: 4  },
+      { id: 'medicine',    ar: 'الطب الباطني',        en: 'Medicine',           w: 11 },
+    ]
+  },
 
-/* ── Build Input Cards ─────────────────────────────────────────── */
-const grid = document.getElementById('grid');
-COURSES.forEach(c => {
-  const div = document.createElement('div');
-  div.className = 'c-card';
-  div.id = 'card-' + c.id;
-  div.innerHTML =
-    '<div class="c-row">' +
-      '<div>' +
-        '<div class="c-ar">' + c.ar + '</div>' +
-        '<div class="c-en">' + c.en + '</div>' +
+  5: {
+    label: 'المرحلة الخامسة',
+    gpaMax: 25,
+    courses: [
+      { id: 'medicine',    ar: 'الطب الباطني',             en: 'Medicine',                   w: 6 },
+      { id: 'gynecology',  ar: 'النسائية',                 en: 'Gynecology',                 w: 6 },
+      { id: 'phc',         ar: 'الرعاية الصحية الأولية',   en: 'PHC',                        w: 5 },
+      { id: 'pediatrics',  ar: 'طب الأطفال',               en: 'Pediatrics',                 w: 3 },
+      { id: 'surgery',     ar: 'الجراحة',                  en: 'Surgery',                    w: 4 },
+      { id: 'ortho',       ar: 'جراحة العظام',             en: 'Orthopedics',                w: 4 },
+      { id: 'radiology',   ar: 'الأشعة والتخدير',          en: 'Radiology & Anesthesiology', w: 4 },
+      { id: 'ophtha',      ar: 'طب العيون',                en: 'Ophthalmology',              w: 4 },
+      { id: 'dermato',     ar: 'الأمراض الجلدية',          en: 'Dermatology',                w: 4 },
+      { id: 'ent',         ar: 'الأنف والأذن والحنجرة',    en: 'Otolaryngology (ENT)',        w: 4 },
+      { id: 'psych',       ar: 'الطب النفسي',             en: 'Psychiatry',                  w: 3 },
+      { id: 'project',     ar: 'المشروع',                 en: 'Community Project',            w: 4 },
+    ]
+  },
+
+  6: {
+    label: 'المرحلة السادسة',
+    gpaMax: 40,
+    courses: [
+      { id: 'medicine',    ar: 'الطب الباطني',        en: 'Medicine',              w: 12 },
+      { id: 'surgery',     ar: 'الجراحة',             en: 'Surgery',               w: 12 },
+      { id: 'gynecology',  ar: 'النسائية والتوليد',   en: 'Gynecology & Obstetrics', w: 11 },
+      { id: 'pediatrics',  ar: 'طب الأطفال',          en: 'Pediatrics',            w: 11 },
+    ]
+  }
+
+};
+
+/* ══════════════════════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════════════════════ */
+let currentStage = null;
+
+/* ══════════════════════════════════════════════════════════════════
+   STAGE SELECTION
+══════════════════════════════════════════════════════════════════ */
+function selectStage(num) {
+  currentStage = num;
+  const stage  = STAGES[num];
+
+  /* update header */
+  document.getElementById('hdr-sub').textContent = stage.label + ' — كلية الطب';
+  document.getElementById('hdr-pills').innerHTML =
+    `<span class="h-pill">عدد المواد: <strong>${stage.courses.length}</strong></span>` +
+    `<span class="h-pill">وحدات المرحلة من المجموع الكلي: <strong>${stage.gpaMax}</strong></span>`;
+  document.getElementById('btn-change').classList.remove('hidden');
+
+  /* hide selector & old result */
+  document.getElementById('selector-card').classList.add('hidden');
+  const rc = document.getElementById('result');
+  rc.classList.add('hidden');
+  rc.classList.remove('anim');
+
+  /* build & show form */
+  buildForm(stage);
+  const fc = document.getElementById('form-card');
+  fc.classList.remove('hidden');
+  fc.classList.remove('anim');
+  void fc.offsetWidth;            /* force reflow to re-trigger animation */
+  fc.classList.add('anim');
+  document.getElementById('form-title').textContent = 'درجات مواد ' + stage.label;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showSelector() {
+  currentStage = null;
+  document.getElementById('selector-card').classList.remove('hidden');
+  document.getElementById('form-card').classList.add('hidden');
+  const rc = document.getElementById('result');
+  rc.classList.add('hidden');
+  rc.classList.remove('anim');
+  document.getElementById('btn-change').classList.add('hidden');
+  document.getElementById('hdr-sub').textContent = 'كلية الطب — اختر المرحلة الدراسية';
+  document.getElementById('hdr-pills').innerHTML =
+    `<span class="h-pill">المراحل: <strong>٤ — ٦</strong></span>` +
+    `<span class="h-pill">نظام الوحدات الدراسية</span>`;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   BUILD FORM
+══════════════════════════════════════════════════════════════════ */
+function buildForm(stage) {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+
+  stage.courses.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'c-card';
+    div.id = 'card-' + c.id;
+    div.innerHTML =
+      '<div class="c-row">' +
+        '<div>' +
+          '<div class="c-ar">' + c.ar + '</div>' +
+          '<div class="c-en">' + c.en + '</div>' +
+        '</div>' +
+        '<span class="c-chip">' + c.w + ' وحدات</span>' +
       '</div>' +
-      '<span class="c-chip">' + c.w + ' وحدات</span>' +
-    '</div>' +
-    '<input type="number" class="g-inp"' +
-    ' id="inp-' + c.id + '"' +
-    ' placeholder="0 – 100"' +
-    ' min="0" max="100" step="any"' +
-    ' data-id="' + c.id + '"' +
-    ' onkeydown="noE(event)"' +
-    ' oninput="live(this)" />';
-  grid.appendChild(div);
-});
+      '<input type="number" class="g-inp"' +
+      ' id="inp-' + c.id + '"' +
+      ' placeholder="0 – 100"' +
+      ' min="0" max="100" step="any"' +
+      ' data-id="' + c.id + '"' +
+      ' onkeydown="noE(event)"' +
+      ' oninput="live(this)" />';
+    grid.appendChild(div);
+  });
+}
 
-/* ── Helpers ───────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════════════════════════ */
 function noE(e) {
   if ('eE+-'.includes(e.key)) e.preventDefault();
 }
@@ -335,20 +527,26 @@ function live(inp) {
   document.getElementById('card-' + inp.dataset.id).classList.toggle('err', bad);
 }
 
-/* ── Calculate ─────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════
+   CALCULATE
+══════════════════════════════════════════════════════════════════ */
 function calculate() {
-  // Reset all error highlights
-  COURSES.forEach(c => {
+  if (!currentStage) return;
+  const stage = STAGES[currentStage];
+
+  /* clear old errors */
+  stage.courses.forEach(c => {
     document.getElementById('inp-'  + c.id).classList.remove('err');
     document.getElementById('card-' + c.id).classList.remove('err');
   });
 
-  const rc   = document.getElementById('result');
-  let sum    = 0;
-  let ok     = true;
-  const rows = [];
+  const rc    = document.getElementById('result');
+  const TOT_W = stage.courses.reduce((s, c) => s + c.w, 0);
+  let sum     = 0;
+  let ok      = true;
+  const rows  = [];
 
-  for (const c of COURSES) {
+  for (const c of stage.courses) {
     const inp = document.getElementById('inp-' + c.id);
     const raw = inp.value.trim();
 
@@ -370,20 +568,22 @@ function calculate() {
     }
   }
 
+  rc.classList.remove('hidden');
+  rc.classList.remove('anim');
+
   if (!ok) {
     rc.innerHTML = '<div class="err-msg">⚠️ يرجى ملء جميع الحقول بقيم صحيحة بين 0 و100.</div>';
-    rc.className = 'card show';
+    void rc.offsetWidth;
+    rc.classList.add('anim');
     rc.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     return;
   }
 
-  // Core calculation
-  const avg100 = sum / TOT_W;           // weighted average out of 100
-  const avg25  = avg100 / DIVISOR;      // = avg100 × 25 / 100 = avg100 / 4
+  const GPA_MAX = stage.gpaMax;
+  const avg100  = sum / TOT_W;
+  const avgGpa  = avg100 * GPA_MAX / 100;
+  const info    = gradeInfo(avg100);
 
-  const info = gradeInfo(avg100);
-
-  // Build table rows
   const tRows = rows.map(r =>
     `<tr>` +
       `<td>${r.ar}</td>` +
@@ -402,7 +602,7 @@ function calculate() {
     `</tr>`;
 
   rc.innerHTML =
-    `<div class="r-heading">نتائج المرحلة الخامسة</div>
+    `<div class="r-heading">نتائج ${stage.label}</div>
 
     <div class="scores-row">
       <div class="s-box blue">
@@ -411,9 +611,9 @@ function calculate() {
         <div class="s-of">/ 100</div>
       </div>
       <div class="s-box purple">
-        <div class="s-lbl">معدلك من 25</div>
-        <div class="s-val">${avg25.toFixed(2)}</div>
-        <div class="s-of">/ 25</div>
+        <div class="s-lbl">معدلك من ${GPA_MAX}</div>
+        <div class="s-val">${avgGpa.toFixed(2)}</div>
+        <div class="s-of">/ ${GPA_MAX}</div>
       </div>
     </div>
 
@@ -442,34 +642,36 @@ function calculate() {
     </div>
 
     <div class="formula-note">
-      <b>آلية الحساب:</b>
-      المعدل من 100 = مجموع (الدرجة × الوحدات) ÷ مجموع الوحدات =
-      ${sum.toFixed(2)} ÷ ${TOT_W} = <b>${avg100.toFixed(4)}</b>
+      <b>آلية الحساب:</b><br>
+      المعدل من 100 = مجموع (الدرجة × الوحدات) ÷ مجموع الوحدات
+      = ${sum.toFixed(2)} ÷ ${TOT_W} = <b>${avg100.toFixed(4)}</b>
       <br>
-      المعدل من 25 = ${avg100.toFixed(4)} ÷ 4 = <b>${avg25.toFixed(4)}</b>
+      المعدل من ${GPA_MAX} = ${avg100.toFixed(4)} × (${GPA_MAX} ÷ 100)
+      = <b>${avgGpa.toFixed(4)}</b>
     </div>`;
 
-  rc.className = 'card show';
+  void rc.offsetWidth;
+  rc.classList.add('anim');
 
-  // Animate progress bar after DOM paint
   requestAnimationFrame(() => requestAnimationFrame(() => {
     const pf = document.getElementById('pf');
-    if (pf) pf.style.width = avg100 + '%';
+    if (pf) pf.style.width = avg100.toFixed(4) + '%';
   }));
 
   rc.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-/* ── Grade label ───────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════
+   GRADE LABELS
+══════════════════════════════════════════════════════════════════ */
 function gradeInfo(avg) {
   if (avg >= 90) return { lbl: 'امتياز',   cls: 'excellent', icon: '🏆' };
   if (avg >= 80) return { lbl: 'جيد جداً', cls: 'vgood',     icon: '⭐' };
   if (avg >= 70) return { lbl: 'جيد',      cls: 'good',      icon: '✅' };
-  if (avg >= 60) return { lbl: 'متوسط',    cls: 'medium',      icon: '📋' };
+  if (avg >= 60) return { lbl: 'متوسط',    cls: 'medium',    icon: '📋' };
   if (avg >= 50) return { lbl: 'مقبول',    cls: 'pass',      icon: '📋' };
   return               { lbl: 'راسب',      cls: 'fail',      icon: '❌' };
 }
- 
 </script>
 </body>
 </html>
